@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: users
-        image: 22i0837/lightstep-users:v1  
+        image: 22i0837/lightstep-users:0e1d814ab0c3db3decc55913211180ad83b5ecb0
         ports:
         - containerPort: 8080
         env:
