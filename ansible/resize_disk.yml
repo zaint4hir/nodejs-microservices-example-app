@@ -1,0 +1,15 @@
+---
+- name: Expand Partition and Filesystem to 25GB
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: Install cloud-guest-utils (contains growpart)
+      apt:
+        name: cloud-guest-utils
+        state: present
+
+    - name: Expand the partition
+      shell: growpart /dev/nvme0n1 1 || true # On newer EC2s, disk is usually nvme0n1
+
+    - name: Expand the ext4 filesystem
+      shell: resize2fs /dev/nvme0n1p1 # This maps to the root partition
