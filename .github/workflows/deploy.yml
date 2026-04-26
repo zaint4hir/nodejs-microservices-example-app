@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'k8s/**' # Prevents an infinite loop when the bot commits new YAMLs
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Web Image
+        run: |
+          cd web
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/lightstep-web:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/lightstep-web:${{ github.sha }}
+
+      - name: Build and Push Users Image
+        run: |
+          cd users
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/lightstep-users:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/lightstep-users:${{ github.sha }}
+
+      - name: Update Kubernetes Manifests
+        run: |
+          sed -i "s|image: .*/lightstep-web:.*|image: ${{ secrets.DOCKER_USERNAME }}/lightstep-web:${{ github.sha }}|g" k8s/web.yaml
+          sed -i "s|image: .*/lightstep-users:.*|image: ${{ secrets.DOCKER_USERNAME }}/lightstep-users:${{ github.sha }}|g" k8s/users.yaml
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions CI"
+          git config --global user.email "actions@github.com"
+          git add k8s/
+          git commit -m "Automated update of Kubernetes image tags to commit ${{ github.sha }}"
+          git push
