@@ -7,7 +7,7 @@ const axios = require("axios");
 // Constants
 const PORT = process.env.PORT || 80;
 const HOST = process.env.HOST || "0.0.0.0";
-const USERS_SERVICE_URL = process.env.SERVICE_URL || "http://users";
+const USERS_SERVICE_URL = process.env.SERVICE_URL || "http://users-service";
 
 // App
 const app = express();
