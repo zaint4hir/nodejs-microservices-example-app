@@ -75,7 +75,12 @@ resource "aws_instance" "k8s_node" {
   key_name      = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
 
-  tags = {
+ 
+  root_block_device {
+    volume_size = 25
+    volume_type = "gp3" 
+  }
+   tags = {
     Name = "K8s-ArgoCD-Node"
   }
 }
