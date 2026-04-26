@@ -17,9 +17,12 @@ spec:
     spec:
       containers:
       - name: users
-        image: 22i0837/lightstep-users:8baa841b902fc47a87f4534d16ac91b371ecbc59
+        image: 22i0837/lightstep-users:v1  
         ports:
         - containerPort: 8080
+        env:
+        - name: DBHOST
+          value: "mongodb://mongo-service:27017"
 
 ---
 apiVersion: v1
