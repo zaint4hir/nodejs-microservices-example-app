@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: 22i0837/lightstep-web:ed4cb06b41be3bfe267ed29de2bc8dd7c4804e17
+        image: 22i0837/lightstep-web:6a71e7ce23677348a1014a0394ef563c053c5d5e
         ports:
         - containerPort: 8080
 
