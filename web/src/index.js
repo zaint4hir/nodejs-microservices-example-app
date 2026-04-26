@@ -1,7 +1,16 @@
 "use strict";
 
 const express = require("express");
-// Serve simple frontend UI (NEW - no impact on existing logic)
+
+const axios = require("axios");
+
+// Constants
+const PORT = process.env.PORT || 80;
+const HOST = process.env.HOST || "0.0.0.0";
+const USERS_SERVICE_URL = process.env.SERVICE_URL || "http://users";
+
+// App
+const app = express();
 app.get("/ui", (req, res) => {
   res.send(`
 <!DOCTYPE html>
@@ -80,16 +89,6 @@ async function callUsers() {
 </html>
   `);
 });
-const axios = require("axios");
-
-// Constants
-const PORT = process.env.PORT || 80;
-const HOST = process.env.HOST || "0.0.0.0";
-const USERS_SERVICE_URL = process.env.SERVICE_URL || "http://users";
-
-// App
-const app = express();
-
 async function checkWeather(weather, res) {
   switch (weather) {
     // it's raining, we are loosing time
