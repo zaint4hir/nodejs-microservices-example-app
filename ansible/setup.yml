@@ -1,0 +1,37 @@
+---
+- name: Configure EC2 Node and Initialize Kubernetes
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install MicroK8s via snap
+      command: snap install microk8s --classic
+      args:
+        creates: /snap/bin/microk8s
+
+    - name: Add ubuntu user to microk8s group
+      user:
+        name: ubuntu
+        groups: microk8s
+        append: yes
+
+    - name: Wait for MicroK8s to be ready
+      command: microk8s status --wait-ready
+      changed_when: false
+
+    - name: Enable DNS and Storage addons
+      command: microk8s enable dns hostpath-storage
+      changed_when: false
+
+    - name: Alias kubectl for convenience
+      command: snap alias microk8s.kubectl kubectl
+      args:
+        creates: /snap/bin/kubectl
